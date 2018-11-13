@@ -14,11 +14,17 @@ createResource() {
         --generate-ssh-keys
 
     az vm open-port --port 80 --resource-group testResources --name testVM
+
+    az vm run-command invoke \
+        --resource-group testResources \
+        --name testVM \
+        --command-id RunShellScript \
+        --scripts "sudo yum install git -y"
 }
 
 deleteResource() {
     echo "Deleting resource"
-    az group delete --name testResources
+    az group delete --name testResources -y
 }
 
 ### MAIN ###
