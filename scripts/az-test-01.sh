@@ -15,6 +15,7 @@ createResource() {
 
     az vm open-port --port 80 --resource-group testResources --name testVM
 
+    # Test running a command
     az vm run-command invoke \
         --resource-group testResources \
         --name testVM \
