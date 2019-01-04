@@ -31,21 +31,28 @@ createResource() {
 
     rm testfile.txt
 
-    #az vm create \
-    #    --resource-group testResources \
-    #    --name testVM \
-    #    --image CentOS \
-    #    --admin-username pafuser \
-    #    --generate-ssh-keys
-
-    #az vm open-port --port 80 --resource-group testResources --name testVM
+    az vm create \
+        --resource-group testResources \
+        --name testVM \
+        --image CentOS \
+        --admin-username pafuser \
+        --generate-ssh-keys
 
     # Test running a command
-    #az vm run-command invoke \
-    #    --resource-group testResources \
-    #    --name testVM \
-    #    --command-id RunShellScript \
-    #    --scripts "sudo yum install git -y"
+    az vm run-command invoke \
+        --resource-group testResources \
+        --name testVM \
+        --command-id RunShellScript \
+        --scripts "sudo rpm -Uvh https://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm" \
+            "sudo yum install blobfuse -y" \
+            "sudo mkdir /mnt/resource/blobfusetmp" \
+            "sudo chown pafuser /mnt/resource/blobfusetmp" \
+            "mkdir /home/pafuser/.blobfuse" \
+            "touch /home/pafuser/.blobfuse/fuse_connection.cfg" \
+            "echo -e 'accountName pafstorage001\naccountKey $STORAGE_KEY\ncontainerName pafstoragecontainer' > /home/pafuser/.blobfuse/fuse_connection.cfg" \
+            "chmod 700 /home/pafuser/.blobfuse/fuse_connection.cfg" \
+            "mkdir /home/pafuser/mycontainer" \
+            "sudo blobfuse /home/pafuser/mycontainer --tmp-path=/mnt/resource/blobfusetmp  --config-file=/home/pafuser/.blobfuse/fuse_connection.cfg -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120"
 }
 
 deleteResource() {
